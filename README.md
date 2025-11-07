@@ -221,10 +221,10 @@ SECRET_KEY = "dev-machine-secret"
 
 - **Overrides order (later wins):**
 
-    1. Config class
-    2. instance/config.py
-    3. YOURAPP_SETTINGS file
-    4. app.config.from_mapping(...) if you add it
+1. Config class
+2. instance/config.py
+3. YOURAPP_SETTINGS file
+4. app.config.from_mapping(...) if you add it
 
 - **Logging:** tune per env (e.g., JSON logs in prod, DEBUG in dev).
 
