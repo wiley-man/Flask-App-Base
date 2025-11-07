@@ -19,6 +19,7 @@ class DevelopmentConfig(Config):
     # Helpful for dev: show Werkzeug debugger, etc.
     # Use a separate dev DB if you like
     SQLALCHEMY_DATABASE_URI = os.environ.get("DEV_DATABASE_URL", DEFAULT_DB)
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 class TestingConfig(Config):
     TESTING = True

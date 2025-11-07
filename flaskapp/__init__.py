@@ -3,6 +3,8 @@ import os
 from flask import Flask
 from .config import DevelopmentConfig, TestingConfig, ProductionConfig
 from .routes import routes_bp # assume you have a blueprint
+from .extensions import db, migrate
+from .models import Quote
 
 CONFIG_MAP = {
     "development": DevelopmentConfig,
@@ -15,6 +17,7 @@ def create_app(config_name: str | None = None) -> Flask:
     config_name = config_name or os.getenv("FLASK_ENV_NAME", "development")
 
     app = Flask(__name__, instance_relative_config=True)
+    os.makedirs(app.instance_path, exist_ok=True)
 
     # Base config from class
     app.config.from_object(CONFIG_MAP[config_name])
@@ -26,10 +29,31 @@ def create_app(config_name: str | None = None) -> Flask:
     # e.g., export YOURAPP_SETTINGS=/path/to/production.cfg
     app.config.from_envvar("YOURAPP_SETTINGS", silent=True)
 
+    # ---- Extensions ----
+    db.init_app(app)
+    migrate.init_app(app, db)
+
     # Blueprints, extensions, CLI, etc.
     app.register_blueprint(routes_bp)
 
     _configure_logging(app)
+
+    # ---- CLI: seed data ----
+    @app.cli.command("seed-quotes")
+    def seed_quotes():
+        """Insert a few sample quotes (idempotent-ish)."""
+        samples = [
+            Quote(text="Simplicity is the soul of efficiency.", author="Austin Freeman"),
+            Quote(text="Programs must be written for people to read.", author="Harold Abelson"),
+            Quote(text="Talk is cheap. Show me the code.", author="Linus Torvalds"),
+        ]
+        # Only add if table is empty
+        if Quote.query.count() == 0:
+            db.session.add_all(samples)
+            db.session.commit()
+            print("Seeded sample quotes.")
+        else:
+            print("Quotes already present; skipping seed.")
 
     return app
 
@@ -43,3 +67,4 @@ def _configure_logging(app: Flask) -> None:
     app.logger.setLevel(level)
     if not any(isinstance(h, logging.StreamHandler) for h in app.logger.handlers):
         app.logger.addHandler(handler)
+

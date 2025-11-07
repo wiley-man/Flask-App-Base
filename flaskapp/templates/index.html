@@ -1,9 +1,19 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>Home Page</title>
+    <meta charset="utf-8" />
+    <title>Home</title>
+    <style>
+      body { font-family: system-ui, Arial, sans-serif; margin: 2rem; }
+      .quote { font-size: 1.25rem; line-height: 1.6; }
+      .author { margin-top: .5rem; opacity: .7; }
+    </style>
   </head>
   <body>
-    <h1>Hello from the Flask home page!</h1>
+    <h1>Comment of the Day</h1>
+    <p class="quote">“{{ quote }}”</p>
+    {% if author %}
+      <p class="author">— {{ author }}</p>
+    {% endif %}
   </body>
 </html>

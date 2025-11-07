@@ -1,15 +1,43 @@
 import os
 import pytest
-from flaskapp import create_app
+from flaskapp import create_app, db, Quote
+from flask import template_rendered
 from dotenv import load_dotenv
+from contextlib import contextmanager
 
 @pytest.fixture(scope="session")
 def app():
   load_dotenv(".env.test")
   app = create_app("testing")
   with app.app_context():
-      yield app
+    db.create_all()
+    # db.session.add(Quote(text="Test quote", author="Tester"))
+    # db.session.commit()
+    yield app
+    db.session.remove()
+    db.drop_all()
 
 @pytest.fixture()
 def client(app):
   return app.test_client()
+
+@pytest.fixture()
+def session(app):
+    """Provide a fresh database session for each test."""
+    with app.app_context():
+        yield db.session
+        db.session.rollback()
+
+@contextmanager
+def captured_templates(app):
+    """Capture which templates were rendered during a request."""
+    recorded = []
+
+    def record(sender, template, context, **extra):
+        recorded.append((template, context))
+
+    template_rendered.connect(record, app)
+    try:
+        yield recorded
+    finally:
+        template_rendered.disconnect(record, app)

@@ -4,3 +4,8 @@
 __PYCACHE__/
 *.pyc
 *.pyo
+.github/
+.vscode/
+.DS_Store
+.env
+.env.*

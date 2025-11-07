@@ -1,37 +1,25 @@
-# tests/test_home.py
 import pytest
 from flask import template_rendered
-from contextlib import contextmanager
+from dotenv import load_dotenv
+from flaskapp import db, Quote
+
 
 # If your package is named `yourapp` and exposes create_app in __init__.py:
 from flaskapp import create_app
+from tests.conftest import captured_templates
 
-
+# overload the app fixture to pre-populate the database
 @pytest.fixture(scope="session")
 def app():
-    app = create_app()
-    app.config.update(TESTING=True)
-    return app
-
-
-@pytest.fixture()
-def client(app):
-    return app.test_client()
-
-
-@contextmanager
-def captured_templates(app):
-    """Capture which templates were rendered during a request."""
-    recorded = []
-
-    def record(sender, template, context, **extra):
-        recorded.append((template, context))
-
-    template_rendered.connect(record, app)
-    try:
-        yield recorded
-    finally:
-        template_rendered.disconnect(record, app)
+  load_dotenv(".env.test")
+  app = create_app("testing")
+  with app.app_context():
+    db.create_all()
+    db.session.add(Quote(text="Test quote", author="Tester"))
+    db.session.commit()
+    yield app
+    db.session.remove()
+    db.drop_all()
 
 
 def test_home_status_and_content(client):
@@ -39,7 +27,7 @@ def test_home_status_and_content(client):
     resp = client.get("/")
     assert resp.status_code == 200
     # Adjust the expected bytes below if your template text differs.
-    assert b"Hello from the Flask home page" in resp.data
+    assert b"Test quote" in resp.data
 
 
 def test_home_uses_index_template(app, client):
