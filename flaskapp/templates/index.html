@@ -2,18 +2,64 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Home Page</title>
-    <style>
-      body { font-family: system-ui, Arial, sans-serif; margin: 2rem; }
-      .quote { font-size: 1.25rem; line-height: 1.6; }
-      .author { margin-top: .5rem; opacity: .7; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Comment of the Day</title>
+
+    <!-- Optional: nice font -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <!-- Our styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/quotes.css') }}">
   </head>
   <body>
-    <h1>Comment of the Day</h1>
-    <p class="quote">“{{ quote }}”</p>
-    {% if author %}
-      <p class="author">— {{ author }}</p>
-    {% endif %}
+    <main class="wrap">
+      <section class="quote-card" role="article" aria-label="Comment of the Day">
+        <div class="badge">Comment of the Day</div>
+
+        <blockquote class="quote">
+          <div class="quote-mark" aria-hidden="true">“</div>
+          <p class="quote-text"><br>{{ quote }}</p>
+          <div class="quote-mark end" aria-hidden="true">”</div>
+        </blockquote>
+
+        {% if author %}
+        <footer class="meta">
+          <div class="avatar" aria-hidden="true">
+            {{ author.split()[0][0] if author else 'C' }}
+          </div>
+          <div class="byline">
+            <span class="label">by</span>
+            <span class="author">{{ author }}</span>
+          </div>
+
+          <button class="btn ghost copy" type="button" data-copy="{{ quote }}{% if author %} — {{ author }}{% endif %}">
+            Copy
+          </button>
+        </footer>
+        {% else %}
+        <footer class="meta empty">
+          <em>Add quotes with <code>flask seed-quotes</code></em>
+        </footer>
+        {% endif %}
+      </section>
+
+      <button class="btn primary" onclick="location.reload()">Show another</button>
+    </main>
+
+    <script>
+      // Copy-to-clipboard
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.copy');
+        if (!btn) return;
+        const text = btn.getAttribute('data-copy');
+        navigator.clipboard.writeText(text).then(() => {
+          const original = btn.textContent;
+          btn.textContent = 'Copied!';
+          setTimeout(() => (btn.textContent = original), 1100);
+        });
+      });
+    </script>
   </body>
 </html>
+

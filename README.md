@@ -9,6 +9,9 @@ flask-app-base/
 ├─ flaskapp/
 |  ├─ templates/
 |  |  └─ index.html      # jinja2 template for home page
+|  ├─ static/
+|  |  └─ css/
+|  |     └─ qoutes.css
 │  ├─ __init__.py        # app factory lives here
 │  ├─ extensions.py      # db, migrate instances
 │  ├─ routes.py
@@ -152,57 +155,7 @@ Flask 3.x removed FLASK_ENV. You control debug mode with FLASK_DEBUG=1, and you 
 
 FLASK_ENV_NAME=development|testing|production).
 
-## 4) Environment selection
-
-### Development (local)
-
-.env (auto-loaded by flask run via python-dotenv):
-
-```ini
-FLASK_APP=wsgi.py
-FLASK_DEBUG=1
-FLASK_ENV_NAME=development
-DEV_DATABASE_URL=sqlite:///dev.db
-SECRET_KEY=dev-only
-```
-
-Run:
-
-```bash
-flask run
-```
-
-or
-
-```bash
-python -m flask run
-```
-
-### Production
-
-Set real environment variables at deploy time (no .env files):
-
-```ini
-export FLASK_ENV_NAME=production
-export SECRET_KEY='super-long-random-string'
-export DATABASE_URL='postgresql+psycopg://user:pass@host/db'
-export LOG_LEVEL=INFO
-```
-
-WSGI entry (wsgi.py):
-
-```python
-from yourapp import create_app
-app = create_app()  # picks up FLASK_ENV_NAME
-```
-
-Example gunicorn command:
-
-```bash
-gunicorn "wsgi:app" --bind 0.0.0.0:8000 --workers 3
-```
-
-## 5) Instance config (optional)
+## 4) Instance config (optional)
 
 Anything in instance/config.py is ignored by git and loads after your class config—great for per-host overrides:
 
@@ -212,14 +165,14 @@ Anything in instance/config.py is ignored by git and loads after your class conf
 SECRET_KEY = "dev-machine-secret"
 ```
 
-## 6) Adding SQLAlchemy and migrate to flask
+## 5) Adding SQLAlchemy and migrate to flask
 
 - uses Flask-SQLAlchemy for models
 - wires up Flask-Migrate for schema changes
 - replaces the raw sqlite3 calls with ORM queries
 - keeps your blueprint home route that shows a random “Comment of the Day”
 
-## 7) flaskapp/extensions.py
+## 6) flaskapp/extensions.py
 
 ```python
 # flaskapp/extensions.py
@@ -230,7 +183,7 @@ db = SQLAlchemy()
 migrate = Migrate()
 ```
 
-## 8) flaskapp/models.py
+## 7) flaskapp/models.py
 
 ```python
 # flaskapp/models.py
@@ -245,7 +198,7 @@ class Quote(db.Model):
 
 ```
 
-## 9) flaskapp/routes.py
+## 8) flaskapp/routes.py
 
 ```python
 # flaskapp/routes.py
@@ -269,31 +222,261 @@ Note: func.random() works on SQLite & Postgres.
 
 On MySQL/MariaDB, Alembic/SQLAlchemy will translate to RAND() automatically.
 
-## 10) flaskapp/templates/index.html
+## 9) adding html templates and css
+
+flaskapp/templates/index.html
 
 ```html
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Home</title>
-    <style>
-      body { font-family: system-ui, Arial, sans-serif; margin: 2rem; }
-      .quote { font-size: 1.25rem; line-height: 1.6; }
-      .author { margin-top: .5rem; opacity: .7; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Comment of the Day</title>
+
+    <!-- Optional: nice font -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <!-- Our styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/quotes.css') }}">
   </head>
   <body>
-    <h1>Comment of the Day</h1>
-    <p class="quote">“{{ quote }}”</p>
-    {% if author %}
-      <p class="author">— {{ author }}</p>
-    {% endif %}
+    <main class="wrap">
+      <section class="quote-card" role="article" aria-label="Comment of the Day">
+        <div class="badge">Comment of the Day</div>
+
+        <blockquote class="quote">
+          <div class="quote-mark" aria-hidden="true">“</div>
+          <p class="quote-text"><br>{{ quote }}</p>
+          <div class="quote-mark end" aria-hidden="true">”</div>
+        </blockquote>
+
+        {% if author %}
+        <footer class="meta">
+          <div class="avatar" aria-hidden="true">
+            {{ author.split()[0][0] if author else 'C' }}
+          </div>
+          <div class="byline">
+            <span class="label">by</span>
+            <span class="author">{{ author }}</span>
+          </div>
+
+          <button class="btn ghost copy" type="button" data-copy="{{ quote }}{% if author %} — {{ author }}{% endif %}">
+            Copy
+          </button>
+        </footer>
+        {% else %}
+        <footer class="meta empty">
+          <em>Add quotes with <code>flask seed-quotes</code></em>
+        </footer>
+        {% endif %}
+      </section>
+
+      <button class="btn primary" onclick="location.reload()">Show another</button>
+    </main>
+
+    <script>
+      // Copy-to-clipboard
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.copy');
+        if (!btn) return;
+        const text = btn.getAttribute('data-copy');
+        navigator.clipboard.writeText(text).then(() => {
+          const original = btn.textContent;
+          btn.textContent = 'Copied!';
+          setTimeout(() => (btn.textContent = original), 1100);
+        });
+      });
+    </script>
   </body>
 </html>
 ```
 
-## 11) Initialize Flask-Migrate & create the migration
+flaskapp/static/css/quotes.css
+
+```css
+:root{
+  --bg: #0b1020;
+  --fg: #e8edf7;
+  --muted: #a6b1c4;
+  --card: #121936;
+  --card-2: #0f1530;
+  --accent: #8aa9ff;
+  --accent-2: #9ef3ff;
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+
+@media (prefers-color-scheme: light){
+  :root{
+    --bg: #f7f9ff;
+    --fg: #1c2333;
+    --muted: #58627a;
+    --card: #ffffff;
+    --card-2: #f2f6ff;
+    --accent: #3a66ff;
+    --accent-2: #5dd6ff;
+    --shadow: 0 10px 24px rgba(24,32,56,.12);
+  }
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body{
+  margin:0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--fg);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(138,169,255,.18), transparent 60%),
+    radial-gradient(900px 500px at 110% 10%, rgba(158,243,255,.18), transparent 60%),
+    linear-gradient(180deg, var(--bg), var(--bg));
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+}
+
+.wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap: 1.25rem;
+  width: min(800px, 100%);
+}
+
+.quote-card{
+  width: 100%;
+  background: linear-gradient(180deg, var(--card), var(--card-2));
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 24px;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transform: translateZ(0); /* enables smoother animation */
+  animation: pop-in .5s cubic-bezier(.2,.8,.2,1) both;
+}
+
+.badge{
+  position: absolute;
+  top: 12px; left: 12px;
+  font-size: .75rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.08);
+  padding: .35rem .55rem;
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+}
+
+.quote{
+  margin: 0 0 1rem 0;
+  position: relative;
+}
+
+.quote-text{
+  font-size: clamp(1.3rem, 2.8vw, 1.85rem);
+  line-height: 1.5;
+  font-weight: 600;
+  letter-spacing: .01em;
+}
+
+.quote-mark{
+  position: absolute;
+  top: -.5rem; left: -.25rem;
+  font-size: clamp(3rem, 8vw, 5rem);
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255,255,255,.16);
+  text-shadow: 0 10px 40px rgba(0,0,0,.25);
+  transform: translateY(-10px) rotate(-2deg);
+  user-select: none;
+  pointer-events: none;
+}
+.quote-mark.end{
+  position: static;
+  display: inline-block;
+  margin-left: .25ch;
+  transform: translateY(.25ch) rotate(1deg);
+  -webkit-text-stroke: 0;
+  color: rgba(255,255,255,.25);
+}
+
+.meta{
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin-top: .5rem;
+}
+
+.meta.empty{
+  color: var(--muted);
+}
+
+.avatar{
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display:grid; place-items:center;
+  font-weight: 700;
+  background: radial-gradient(circle at 30% 30%, var(--accent-2), var(--accent));
+  color: #0b1020;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  box-shadow: 0 6px 16px rgba(0,0,0,.25);
+}
+
+.byline .label{
+  color: var(--muted);
+  font-size: .85rem;
+  margin-right: .35rem;
+}
+.byline .author{
+  font-weight: 600;
+}
+
+.btn{
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  padding: .65rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .06s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
+  box-shadow: 0 8px 20px rgba(0,0,0,.18);
+}
+
+.btn.primary{
+  background: linear-gradient(180deg, var(--accent-2), var(--accent));
+  color: #0b1020;
+}
+.btn.primary:hover{ transform: translateY(-1px); }
+.btn.primary:active{ transform: translateY(0); }
+
+.btn.ghost{
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid rgba(255,255,255,.15);
+  padding: .5rem .85rem;
+  box-shadow: none;
+}
+.btn.ghost:hover{
+  background: rgba(255,255,255,.08);
+}
+
+@keyframes pop-in{
+  from{ opacity: 0; transform: translateY(6px); }
+  to  { opacity: 1; transform: translateY(0); }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce){
+  * { animation: none !important; transition: none !important; }
+}
+```
+
+## 10) Initialize Flask-Migrate & create the migration
 
 From your project root (where FLASK_APP=yourapp resolves to this package):
 
@@ -315,7 +498,7 @@ flask db upgrade
 flask seed-quotes
 ```
 
-## 12) Testing (pytest)
+## 11) Testing (pytest)
 
 .env.test (loaded in tests if you call dotenv.load_dotenv('.env.test')):
 
@@ -446,6 +629,57 @@ def test_multiple_quotes_and_random(session):
     assert isinstance(random_quote, Quote)
     assert random_quote.text in {q.text for q in all_quotes}
 ```
+
+## 12) Environment selection
+
+### Development (local)
+
+.env (auto-loaded by flask run via python-dotenv):
+
+```ini
+FLASK_APP=wsgi.py
+FLASK_DEBUG=1
+FLASK_ENV_NAME=development
+DEV_DATABASE_URL=sqlite:///dev.db
+SECRET_KEY=dev-only
+```
+
+Run:
+
+```bash
+flask run
+```
+
+or
+
+```bash
+python -m flask run
+```
+
+### Production
+
+Set real environment variables at deploy time (no .env files):
+
+```ini
+export FLASK_ENV_NAME=production
+export SECRET_KEY='super-long-random-string'
+export DATABASE_URL='postgresql+psycopg://user:pass@host/db'
+export LOG_LEVEL=INFO
+```
+
+WSGI entry (wsgi.py):
+
+```python
+from yourapp import create_app
+app = create_app()  # picks up FLASK_ENV_NAME
+```
+
+Example gunicorn command:
+
+```bash
+gunicorn "wsgi:app" --bind 0.0.0.0:8000 --workers 3
+```
+
 
 ## 13) Common gotchas & tips
 
