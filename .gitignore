@@ -1,2 +1,6 @@
 /.venv
 /instance
+
+__PYCACHE__/
+*.pyc
+*.pyo

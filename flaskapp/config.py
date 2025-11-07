@@ -33,7 +33,7 @@ class ProductionConfig(Config):
     DEBUG = False
     # Production must provide strong secrets + real DB
     SECRET_KEY = os.environ["SECRET_KEY"]      # crash early if missing
-    SQLALCHEMY_DATABASE_URI = os.environ["DATABASE_URL"]
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", DEFAULT_DB)
     SESSION_COOKIE_SECURE = True
     REMEMBER_COOKIE_SECURE = True
     # Example: stricter headers

@@ -2,7 +2,7 @@ import logging
 import os
 from flask import Flask
 from .config import DevelopmentConfig, TestingConfig, ProductionConfig
-from .routes import bp as routes_bp  # assume you have a blueprint
+from .routes import routes_bp # assume you have a blueprint
 
 CONFIG_MAP = {
     "development": DevelopmentConfig,
