@@ -11,8 +11,6 @@ def app():
   app = create_app("testing")
   with app.app_context():
     db.create_all()
-    # db.session.add(Quote(text="Test quote", author="Tester"))
-    # db.session.commit()
     yield app
     db.session.remove()
     db.drop_all()
