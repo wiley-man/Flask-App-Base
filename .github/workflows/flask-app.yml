@@ -39,4 +39,4 @@ jobs:
       run: |
         export DATABASE_URL="app.sqlite"
         export SECRET_KEY="super-secret"
-        pytest
+        pytest -v
