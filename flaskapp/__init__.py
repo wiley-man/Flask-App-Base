@@ -39,6 +39,9 @@ def create_app(config_name: str | None = None) -> Flask:
 
     _configure_logging(app)
 
+    # LOGGING EXAMPLE
+    app.logger.info(f"Starting app in {config_name} mode")
+    
     # ---- CLI: seed data ----
     @app.cli.command("seed-quotes")
     def seed_quotes():
