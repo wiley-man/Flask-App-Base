@@ -13,3 +13,7 @@ def home():
     else:
         quote, author = row.text, (row.author or None)
     return render_template("index.html", quote=quote, author=author)
+
+@routes_bp.route("/about")
+def about():
+    return render_template("about.html")

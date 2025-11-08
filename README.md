@@ -8,7 +8,9 @@
 flask-app-base/
 ├─ flaskapp/
 |  ├─ templates/
-|  |  └─ index.html      # jinja2 template for home page
+|  |  ├─ base.html
+|  |  ├─ index.html      # jinja2 template for home page (extends base)
+|  |  └─ about.html      # example extra page (extends base)
 |  ├─ static/
 |  |  └─ css/
 |  |     └─ qoutes.css
@@ -123,9 +125,31 @@ def create_app(config_name: str | None = None) -> Flask:
     def seed_quotes():
         """Insert a few sample quotes (idempotent-ish)."""
         samples = [
-            Quote(text="Simplicity is the soul of efficiency.", author="Austin Freeman"),
-            Quote(text="Programs must be written for people to read.", author="Harold Abelson"),
-            Quote(text="Talk is cheap. Show me the code.", author="Linus Torvalds"),
+            Quote(text="Simplicity is the soul of efficiency", author="Austin Freeman"),
+            Quote(text="Programs must be written for people to read", author="Harold Abelson"),
+            Quote(text="Talk is cheap. Show me the code", author="Linus Torvalds"),
+            Quote(text="Any sufficiently advanced technology is indistinguishable from magic", author="Arthur C. Clarke"),
+            Quote(text="The best way to predict the future is to invent it", author="Alan Kay"),
+            Quote(text=""Stay hungr", author=" stay foolish.", author="Steve Jobs"),
+            Quote(text="Growth and comfort do not coexist", author="Ginni Rommetty"),
+            Quote(text="Technology is best when it brings people together", author="Matt Mullenweg"),
+            Quote(text="The technology you use impresses no one. The experience you create with it is everything", author="Sean Gerety"),
+            Quote(text=""The advance of technology is based on making it fit in so that you don’t really even notice i", author=" so it’s part of everyday life.", author="Bill Gates"),
+            Quote(text=""If you’re offered a seat on a rocket shi", author=" don’t ask what seat.", author="Sheryl Sandberg"),
+            Quote(text="You can focus on things that are barriers or you can focus on scaling the wall or redefining the problem", author="Tim Cook"),
+            Quote(text="Don’t be afraid to change the model", author="Reed Hastings"),
+            Quote(text="Never trust a computer you can’t throw out a window", author="Steven Wozniak"),
+            Quote(text="Never let a computer know you’re in a hurry", author="author unknown"),
+            Quote(text="Hardware: The parts of a computer system that can be kicked", author="Jeff Pesis"),
+            Quote(text=""Once a new technology rolls over yo", author=" if you’re not part of the steamrolle", author=" you’re part of the road.", author="Stewart Brand"),
+            Quote(text=""If it keeps u", author=" man will atrophy all his limbs but the push-button finger.", author="Frank Lloyd Wright"),
+            Quote(text=""Technology is ruled by two types of people: those who manage what they do not understan", author=" and those who understand what they do not manage.", author="Make Trout"),
+            Quote(text=""Technology is like a fish. The longer it stays on the shel", author=" the less desirable it becomes.", author="Andrew Heller"),
+            Quote(text="I just invent. Then I wait until man comes around to needing what I’ve invented", author="R. Buckminster Fuller"),
+            Quote(text="Computers have lots of memory but no imagination", author="author unknown"),
+            Quote(text="People who smile while they are alone used to be called insane until we invented smartphones and social media", author="Mokokoma Mokhonoana"),
+            Quote(text="I won’t be impressed with technology until I can download food", author="author unknown"),
+            Quote(text="Life was much easier when Apple and Blackberry were just fruits", author="author unknown"),
         ]
         # Only add if table is empty
         if Quote.query.count() == 0:
@@ -222,9 +246,79 @@ Note: func.random() works on SQLite & Postgres.
 
 On MySQL/MariaDB, Alembic/SQLAlchemy will translate to RAND() automatically.
 
-## 9) adding html templates and css
+## 9) adding html templates and css using jinja2 inheretance
 
-flaskapp/templates/index.html
+### flaskapp/templates/base.html
+
+This is the master layout. It sets typography, includes your CSS, and exposes blocks for child pages to fill.
+
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{% block title %}My Flask App{% endblock %}</title>
+
+    {% block head_fonts %}
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    {% endblock %}
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/quotes.css') }}">
+
+    {% block head_extra %}{% endblock %}
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="nav">
+        <a class="brand" href="{{ url_for('routes.home') }}">✨ Comments</a>
+        <div class="spacer"></div>
+        <a class="nav-link {% if request.endpoint == 'routes.home' %}active{% endif %}"
+           href="{{ url_for('routes.home') }}">Home</a>
+        <a class="nav-link {% if request.endpoint == 'routes.about' %}active{% endif %}"
+           href="{{ url_for('routes.about') }}">About</a>
+      </nav>
+    </header>
+
+    <main class="wrap">
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+      <small>© {{ config.get('APP_NAME', 'This App') }} · Powered by Flask</small>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+  </body>
+</html>
+```
+
+### flaskapp/templates/about.html
+
+```html
+{% extends "base.html" %}
+
+{% block title %}About{% endblock %}
+
+{% block content %}
+  <section class="quote-card" aria-label="About this app">
+    <div class="badge">About</div>
+    <p class="quote-text">
+      This demo shows a home page that pulls a random quote from the database using SQLAlchemy,
+      Flask-Migrate for schema changes, and a shared base template for consistent styling.
+    </p>
+    <footer class="meta empty">
+      <em>Try the Home page to see a fresh quote.</em>
+    </footer>
+  </section>
+{% endblock %}
+```
+
+### flaskapp/templates/index.html
+
+This is your “Comment of the Day” page—same visual design, now plugged into base.html.
 
 ```html
 <!doctype html>
@@ -293,10 +387,10 @@ flaskapp/templates/index.html
 </html>
 ```
 
-flaskapp/static/css/quotes.css
+### flaskapp/static/css/quotes.css
 
 ```css
-:root{
+::root{
   --bg: #0b1020;
   --fg: #e8edf7;
   --muted: #a6b1c4;
@@ -474,6 +568,28 @@ body{
 @media (prefers-reduced-motion: reduce){
   * { animation: none !important; transition: none !important; }
 }
+
+.site-header, .site-footer{
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto 1rem;
+  color: var(--muted);
+}
+.nav{
+  display:flex; align-items:center; gap:1rem;
+  padding: .5rem 0 1rem;
+}
+.brand{ font-weight: 800; text-decoration:none; color: var(--fg); }
+.nav .spacer{ flex:1; }
+.nav-link{
+  text-decoration:none; color: var(--muted);
+  padding: .35rem .6rem; border-radius: 8px;
+}
+.nav-link.active, .nav-link:hover{
+  color: var(--fg);
+  background: rgba(255,255,255,.08);
+}
+.site-footer{ text-align:center; margin-top: 2rem; }
 ```
 
 ## 10) Initialize Flask-Migrate & create the migration

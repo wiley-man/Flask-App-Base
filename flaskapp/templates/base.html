@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{% block title %}My Flask App{% endblock %}</title>
+
+    {% block head_fonts %}
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    {% endblock %}
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/quotes.css') }}">
+
+    {% block head_extra %}{% endblock %}
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="nav">
+        <a class="brand" href="{{ url_for('routes.home') }}">✨ Comments</a>
+        <div class="spacer"></div>
+        <a class="nav-link {% if request.endpoint == 'routes.home' %}active{% endif %}"
+           href="{{ url_for('routes.home') }}">Home</a>
+        <a class="nav-link {% if request.endpoint == 'routes.about' %}active{% endif %}"
+           href="{{ url_for('routes.about') }}">About</a>
+      </nav>
+    </header>
+
+    <main class="wrap">
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+      <small>© {{ config.get('APP_NAME', 'This App') }} · Powered by Flask</small>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

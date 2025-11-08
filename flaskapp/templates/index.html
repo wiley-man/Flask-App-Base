@@ -1,65 +1,53 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Comment of the Day</title>
+{% extends "base.html" %}
 
-    <!-- Optional: nice font -->
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+{% block title %}Comment of the Day{% endblock %}
 
-    <!-- Our styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/quotes.css') }}">
-  </head>
-  <body>
-    <main class="wrap">
-      <section class="quote-card" role="article" aria-label="Comment of the Day">
-        <div class="badge">Comment of the Day</div>
+{% block content %}
+  <section class="quote-card" role="article" aria-label="Comment of the Day">
+    <div class="badge">Comment of the Day</div>
 
-        <blockquote class="quote">
-          <div class="quote-mark" aria-hidden="true">“</div>
-          <p class="quote-text"><br>{{ quote }}</p>
-          <div class="quote-mark end" aria-hidden="true">”</div>
-        </blockquote>
+    <blockquote class="quote">
+      <span class="quote-mark" aria-hidden="true">“</span>
+      <p class="quote-text">{{ quote }}</p>
+      <span class="quote-mark end" aria-hidden="true">”</span>
+    </blockquote>
 
-        {% if author %}
-        <footer class="meta">
-          <div class="avatar" aria-hidden="true">
-            {{ author.split()[0][0] if author else 'C' }}
-          </div>
-          <div class="byline">
-            <span class="label">by</span>
-            <span class="author">{{ author }}</span>
-          </div>
+    {% if author %}
+    <footer class="meta">
+      <div class="avatar" aria-hidden="true">
+        {{ author.split()[0][0] if author else 'C' }}
+      </div>
+      <div class="byline">
+        <span class="label">by</span>
+        <span class="author">{{ author }}</span>
+      </div>
 
-          <button class="btn ghost copy" type="button" data-copy="{{ quote }}{% if author %} — {{ author }}{% endif %}">
-            Copy
-          </button>
-        </footer>
-        {% else %}
-        <footer class="meta empty">
-          <em>Add quotes with <code>flask seed-quotes</code></em>
-        </footer>
-        {% endif %}
-      </section>
+      <button class="btn ghost copy" type="button" data-copy="{{ quote }}{% if author %} — {{ author }}{% endif %}">
+        Copy
+      </button>
+    </footer>
+    {% else %}
+    <footer class="meta empty">
+      <em>Add quotes with <code>flask seed-quotes</code></em>
+    </footer>
+    {% endif %}
+  </section>
 
-      <button class="btn primary" onclick="location.reload()">Show another</button>
-    </main>
+  <button class="btn primary" onclick="location.reload()">Show another</button>
+{% endblock %}
 
-    <script>
-      // Copy-to-clipboard
-      document.addEventListener('click', (e) => {
-        const btn = e.target.closest('.copy');
-        if (!btn) return;
-        const text = btn.getAttribute('data-copy');
-        navigator.clipboard.writeText(text).then(() => {
-          const original = btn.textContent;
-          btn.textContent = 'Copied!';
-          setTimeout(() => (btn.textContent = original), 1100);
-        });
-      });
-    </script>
-  </body>
-</html>
-
+{% block scripts %}
+<script>
+  // Copy-to-clipboard
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.copy');
+    if (!btn) return;
+    const text = btn.getAttribute('data-copy');
+    navigator.clipboard.writeText(text).then(() => {
+      const original = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(() => (btn.textContent = original), 1100);
+    });
+  });
+</script>
+{% endblock %}

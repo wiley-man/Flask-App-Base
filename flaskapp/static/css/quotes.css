@@ -176,3 +176,26 @@ body{
 @media (prefers-reduced-motion: reduce){
   * { animation: none !important; transition: none !important; }
 }
+
+.site-header, .site-footer{
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto 1rem;
+  color: var(--muted);
+}
+.nav{
+  display:flex; align-items:center; gap:1rem;
+  padding: .5rem 0 1rem;
+}
+.brand{ font-weight: 800; text-decoration:none; color: var(--fg); }
+.nav .spacer{ flex:1; }
+.nav-link{
+  text-decoration:none; color: var(--muted);
+  padding: .35rem .6rem; border-radius: 8px;
+}
+.nav-link.active, .nav-link:hover{
+  color: var(--fg);
+  background: rgba(255,255,255,.08);
+}
+.site-footer{ text-align:center; margin-top: 2rem; }
+
