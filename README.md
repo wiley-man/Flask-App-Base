@@ -27,9 +27,9 @@ flask-app-base/
 ├─ .env.test             # test-only env vars
 ├─ wsgi.py               # for prod servers (gunicorn/uwsgi)
 └─ tests/
-├─ conftest.py
-├─ test_home.py
-└─ test_example.py
+   ├─ conftest.py
+   ├─ test_home.py
+   └─ test_example.py
 ```
 
 ## 2) Config classes (flaskapp/config.py)
