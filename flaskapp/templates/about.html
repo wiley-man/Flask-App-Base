@@ -1,14 +1,13 @@
 {% extends "base.html" %}
+{% from "_components/quote_card.html" import quote_card %}
+
+{% block title %}About{% endblock %}
 
 {% block content %}
-  <section class="quote-card" aria-label="About this app">
-    <div class="badge">About</div>
-    <p class="quote-text">
-      This demo shows a home page that pulls a random quote from the database using SQLAlchemy,
-      Flask-Migrate for schema changes, and a shared base template for consistent styling.
-    </p>
-    <footer class="meta empty">
-      <em>Try the Home page to see a fresh quote.</em>
-    </footer>
-  </section>
+  {{ quote_card(
+      "This app shows a random quote from the DB using SQLAlchemy + Flask-Migrate, with a shared base layout and reusable components.",
+      "System",
+      title="About this app",
+      show_copy=False
+  ) }}
 {% endblock %}

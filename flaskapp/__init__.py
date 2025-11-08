@@ -1,5 +1,6 @@
 import logging
 import os
+import csv
 from flask import Flask
 from .config import DevelopmentConfig, TestingConfig, ProductionConfig
 from .routes import routes_bp # assume you have a blueprint
@@ -42,40 +43,25 @@ def create_app(config_name: str | None = None) -> Flask:
     @app.cli.command("seed-quotes")
     def seed_quotes():
         """Insert a few sample quotes (idempotent-ish)."""
-        samples = [
-            Quote(text="Simplicity is the soul of efficiency", author="Austin Freeman"),
-            Quote(text="Programs must be written for people to read", author="Harold Abelson"),
-            Quote(text="Talk is cheap. Show me the code", author="Linus Torvalds"),
-            Quote(text="Any sufficiently advanced technology is indistinguishable from magic", author="Arthur C. Clarke"),
-            Quote(text="The best way to predict the future is to invent it", author="Alan Kay"),
-            Quote(text="Stay hungry, stay foolish.", author="Steve Jobs"),
-            Quote(text="Growth and comfort do not coexist", author="Ginni Rommetty"),
-            Quote(text="Technology is best when it brings people together", author="Matt Mullenweg"),
-            Quote(text="The technology you use impresses no one. The experience you create with it is everything", author="Sean Gerety"),
-            Quote(text="The advance of technology is based on making it fit in so that you don’t really even notice it, so it’s part of everyday life.", author="Bill Gates"),
-            Quote(text="If you’re offered a seat on a rocket ship, don’t ask what seat.", author="Sheryl Sandberg"),
-            Quote(text="You can focus on things that are barriers or you can focus on scaling the wall or redefining the problem", author="Tim Cook"),
-            Quote(text="Don’t be afraid to change the model", author="Reed Hastings"),
-            Quote(text="Never trust a computer you can’t throw out a window", author="Steven Wozniak"),
-            Quote(text="Never let a computer know you’re in a hurry", author="author unknown"),
-            Quote(text="Hardware: The parts of a computer system that can be kicked", author="Jeff Pesis"),
-            Quote(text="Once a new technology rolls over you, if you’re not part of the steamroller, you’re part of the road.", author="Stewart Brand"),
-            Quote(text="If it keeps up, man will atrophy all his limbs but the push-button finger.", author="Frank Lloyd Wright"),
-            Quote(text="Technology is ruled by two types of people: those who manage what they do not understand, and those who understand what they do not manage.", author="Make Trout"),
-            Quote(text="Technology is like a fish. The longer it stays on the shelf, the less desirable it becomes.", author="Andrew Heller"),
-            Quote(text="I just invent. Then I wait until man comes around to needing what I’ve invented", author="R. Buckminster Fuller"),
-            Quote(text="Computers have lots of memory but no imagination", author="author unknown"),
-            Quote(text="People who smile while they are alone used to be called insane until we invented smartphones and social media", author="Mokokoma Mokhonoana"),
-            Quote(text="I won’t be impressed with technology until I can download food", author="author unknown"),
-            Quote(text="Life was much easier when Apple and Blackberry were just fruits", author="author unknown"),
-        ]
-        # Only add if table is empty
-        if Quote.query.count() == 0:
-            db.session.add_all(samples)
-            db.session.commit()
-            print("Seeded sample quotes.")
+
+        # Load sample seed data from CSV
+        SEED_DATA_FILE = os.environ.get("SEED_DATA_FILE")
+        if SEED_DATA_FILE and Quote.query.count() == 0:
+            # Using DictReader (for header-based access)
+            with open(SEED_DATA_FILE, newline='', encoding='utf-8') as csvfile:
+                reader = csv.DictReader(csvfile)
+                samples = []
+                for row in reader:
+                    quote = Quote(id=row['id'], text=row['text'], author=row['author'])
+                    samples.append(quote)
+                    print(f"Prepared Quote({quote})")
+
+                # Only add if table is empty
+                db.session.add_all(samples)
+                db.session.commit()
+                print("Seeded sample quotes.")
         else:
-            print("Quotes already present; skipping seed.")
+            print("Quotes already present or not configured; skipping seed.")
 
     return app
 

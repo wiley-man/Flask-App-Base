@@ -1,48 +1,19 @@
 {% extends "base.html" %}
+{% from "_components/quote_card.html" import quote_card %}
 
 {% block title %}Comment of the Day{% endblock %}
 
 {% block content %}
-  <section class="quote-card" role="article" aria-label="Comment of the Day">
-    <div class="badge">Comment of the Day</div>
-
-    <blockquote class="quote">
-      <span class="quote-mark" aria-hidden="true">“</span>
-      <p class="quote-text">{{ quote }}</p>
-      <span class="quote-mark end" aria-hidden="true">”</span>
-    </blockquote>
-
-    {% if author %}
-    <footer class="meta">
-      <div class="avatar" aria-hidden="true">
-        {{ author.split()[0][0] if author else 'C' }}
-      </div>
-      <div class="byline">
-        <span class="label">by</span>
-        <span class="author">{{ author }}</span>
-      </div>
-
-      <button class="btn ghost copy" type="button" data-copy="{{ quote }}{% if author %} — {{ author }}{% endif %}">
-        Copy
-      </button>
-    </footer>
-    {% else %}
-    <footer class="meta empty">
-      <em>Add quotes with <code>flask seed-quotes</code></em>
-    </footer>
-    {% endif %}
-  </section>
-
+  {{ quote_card(quote, author, title="Comment of the Day", show_copy=True) }}
   <button class="btn primary" onclick="location.reload()">Show another</button>
 {% endblock %}
 
 {% block scripts %}
 <script>
-  // Copy-to-clipboard
   document.addEventListener('click', (e) => {
     const btn = e.target.closest('.copy');
     if (!btn) return;
-    const text = btn.getAttribute('data-copy');
+    const text = btn.getAttribute('data-copy') || '';
     navigator.clipboard.writeText(text).then(() => {
       const original = btn.textContent;
       btn.textContent = 'Copied!';

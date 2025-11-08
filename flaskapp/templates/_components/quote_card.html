@@ -1,0 +1,35 @@
+{# templates/_components/quote_card.html #}
+{% macro quote_card(quote, author=None, title="Comment of the Day", show_copy=True) %}
+<section class="quote-card" role="article" aria-label="{{ title }}">
+  <div class="badge">{{ title }}</div>
+
+  <blockquote class="quote">
+    <span class="quote-mark" aria-hidden="true">“</span>
+    <p class="quote-text"><br>{{ quote }}</p>
+    <span class="quote-mark end" aria-hidden="true">”</span>
+  </blockquote>
+
+  {% if author %}
+  <footer class="meta">
+    <div class="avatar" aria-hidden="true">
+      {{ author.split()[0][0] if author else 'C' }}
+    </div>
+    <div class="byline">
+      <span class="label">by</span>
+      <span class="author">{{ author }}</span>
+    </div>
+
+    {% if show_copy %}
+    <button class="btn ghost copy" type="button"
+            data-copy="{{ quote }} — {{ author }}">
+      Copy
+    </button>
+    {% endif %}
+  </footer>
+  {% else %}
+  <footer class="meta empty">
+    <em>No author provided.</em>
+  </footer>
+  {% endif %}
+</section>
+{% endmacro %}

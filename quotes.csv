@@ -1,13 +1,13 @@
-"id","text","author"
+id,text,author
 1,Simplicity is the soul of efficiency.,Austin Freeman
 2,Programs must be written for people to read.,Harold Abelson
-3,Talk is cheap. Show me the code.,Linus Torvalds
+3,"Talk is cheap, Show me the code.",Linus Torvalds
 4,Any sufficiently advanced technology is indistinguishable from magic.,Arthur C. Clarke
 5,The best way to predict the future is to invent it.,Alan Kay
 6,"Stay hungry, stay foolish.",Steve Jobs
 7,Growth and comfort do not coexist.,Ginni Rommetty
 8,Technology is best when it brings people together.,Matt Mullenweg
-9,The technology you use impresses no one. The experience you create with it is everything.,Sean Gerety
+9,"The technology you use impresses no one, The experience you create with it is everything.",Sean Gerety
 10,"The advance of technology is based on making it fit in so that you don’t really even notice it, so it’s part of everyday life.",Bill Gates
 11,"If you’re offered a seat on a rocket ship, don’t ask what seat.",Sheryl Sandberg
 12,You can focus on things that are barriers or you can focus on scaling the wall or redefining the problem.,Tim Cook
@@ -17,7 +17,7 @@
 16,Hardware: The parts of a computer system that can be kicked.,Jeff Pesis
 17,"Once a new technology rolls over you, if you’re not part of the steamroller, you’re part of the road.",Stewart Brand
 18,"If it keeps up, man will atrophy all his limbs but the push-button finger.",Frank Lloyd Wright
-19,"Technology is ruled by two types of people: those who manage what they do not understand, and those who understand what they do not manage.",Make Trout
+19,Technology is ruled by two types of people: those who manage what they do not understand and those who understand what they do not manage.,Make Trout
 20,"Technology is like a fish. The longer it stays on the shelf, the less desirable it becomes.",Andrew Heller
 21,I just invent. Then I wait until man comes around to needing what I’ve invented.,R. Buckminster Fuller
 22,Computers have lots of memory but no imagination.,author unknown
