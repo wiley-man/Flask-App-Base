@@ -1,5 +1,4 @@
 [![Flask App Base](https://img.shields.io/badge/Flask-App%20Base-blue?style=flat-square)](https://github.com/wiley-man/Flask-App-Base)
-[![Tests](https://img.shields.io/github/actions/workflow/status/wiley-man/Flask-App-Base/test.yml?style=flat-square&label=Tests)](https://github.com/wiley-man/Flask-App-Base/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](https://github.com/wiley-man/Flask-App-Base/blob/main/LICENSE)
 ![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blueviolet?style=flat-square)
 ![Flask 3.1](https://img.shields.io/badge/Flask-3.1-lightgrey?style=flat-square)
