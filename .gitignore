@@ -1,6 +1,4 @@
-.gitignore
 .venv/
-.github/
 __PYCACHE__/
 *.pyc
 *.pyo
