@@ -1,17 +1,8 @@
-```{=html}
-<!-- Badges -->
-```
-```{=html}
-<p align="center">
-```
-`<a href="https://github.com/wiley-man/Flask-App-Base">`{=html}`<img src="https://img.shields.io/badge/Flask-App%20Base-blue?style=flat-square" alt="Project Badge">`{=html}`</a>`{=html}
-`<a href="https://github.com/wiley-man/Flask-App-Base/actions">`{=html}`<img src="https://img.shields.io/github/actions/workflow/status/wiley-man/Flask-App-Base/test.yml?style=flat-square&label=Tests" alt="Build Status">`{=html}`</a>`{=html}
-`<a href="https://github.com/wiley-man/Flask-App-Base/blob/main/LICENSE">`{=html}`<img src="https://img.shields.io/badge/License-MIT-green.svg?style=flat-square" alt="License">`{=html}`</a>`{=html}
-`<img src="https://img.shields.io/badge/Python-3.11%2B-blueviolet?style=flat-square" alt="Python Version">`{=html}
-`<img src="https://img.shields.io/badge/Flask-3.1-lightgrey?style=flat-square" alt="Flask Version">`{=html}
-```{=html}
-</p>
-```
+[![Flask App Base](https://img.shields.io/badge/Flask-App%20Base-blue?style=flat-square)](https://github.com/wiley-man/Flask-App-Base)
+[![Tests](https://img.shields.io/github/actions/workflow/status/wiley-man/Flask-App-Base/test.yml?style=flat-square&label=Tests)](https://github.com/wiley-man/Flask-App-Base/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](https://github.com/wiley-man/Flask-App-Base/blob/main/LICENSE)
+![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blueviolet?style=flat-square)
+![Flask 3.1](https://img.shields.io/badge/Flask-3.1-lightgrey?style=flat-square)
 
 ------------------------------------------------------------------------
 
