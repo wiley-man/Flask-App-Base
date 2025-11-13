@@ -1,11 +1,11 @@
-""" Flask application factory and initialization.
-"""
 import logging
 import os
+import csv
 from flask import Flask
 from .config import DevelopmentConfig, TestingConfig, ProductionConfig
-from .routes import main_bp # assume you have a blueprint
+from .routes import routes_bp # assume you have a blueprint
 from .extensions import db, migrate
+from .models import Quote
 
 CONFIG_MAP = {
     "development": DevelopmentConfig,
@@ -35,13 +35,37 @@ def create_app(config_name: str | None = None) -> Flask:
     migrate.init_app(app, db)
 
     # Blueprints, extensions, CLI, etc.
-    app.register_blueprint(main_bp)
+    app.register_blueprint(routes_bp)
 
     _configure_logging(app)
 
     # LOGGING EXAMPLE
     app.logger.info(f"Starting app in {config_name} mode")
     
+    # ---- CLI: seed data ----
+    @app.cli.command("seed-quotes")
+    def seed_quotes():
+        """Insert a few sample quotes (idempotent-ish)."""
+
+        # Load sample seed data from CSV
+        SEED_DATA_FILE = os.environ.get("SEED_DATA_FILE")
+        if SEED_DATA_FILE and Quote.query.count() == 0:
+            # Using DictReader (for header-based access)
+            with open(SEED_DATA_FILE, newline='', encoding='utf-8') as csvfile:
+                reader = csv.DictReader(csvfile)
+                samples = []
+                for row in reader:
+                    quote = Quote(id=row['id'], text=row['text'], author=row['author'])
+                    samples.append(quote)
+                    print(f"Prepared Quote({quote})")
+
+                # Only add if table is empty
+                db.session.add_all(samples)
+                db.session.commit()
+                print("Seeded sample quotes.")
+        else:
+            print("Quotes already present or not configured; skipping seed.")
+
     return app
 
 def _configure_logging(app: Flask) -> None:

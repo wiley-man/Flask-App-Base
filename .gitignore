@@ -1,6 +1,6 @@
-/.venv
-/instance
-
+.gitignore
+.venv/
+.github/
 __PYCACHE__/
 *.pyc
 *.pyo
@@ -9,3 +9,4 @@ __PYCACHE__/
 .DS_Store
 .env
 .env.*
+.pytest_cache/

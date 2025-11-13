@@ -1,0 +1,18 @@
+# visual layout of directory structure
+flask-app-base/
+├─ flaskapp/
+|  ├─ templates/
+|  ├─ static/
+│  ├─ __init__.py        # app factory lives here
+│  ├─ extensions.py      # db, migrate instances
+│  ├─ routes.py
+│  ├─ models.py
+│  └─ config.py          # all configs in one place
+├─ instance/             # machine-specific, not committed
+│  └─ config.py          # optional local secrets/overrides
+├─ .env                  # dev-only env vars (never in prod)
+├─ .env.test             # test-only env vars
+├─ wsgi.py               # for prod servers (gunicorn/uwsgi)
+└─ tests/
+   ├─ conftest.py
+   ├─ test_main.py
