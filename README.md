@@ -1,4 +1,4 @@
-![Static Badge](https://img.shields.io/badge/flask-app_base-blue?link=https%3A%2F%2Fgithub.com%2Fwiley-man%2FFlask-App-Base)
+![Static Badge](https://img.shields.io/badge/flask-app_base-blue?link=https://github.com%2Fwiley-man%2FFlask-App-Base)
 ![GitHub License](https://img.shields.io/github/license/wiley-man/flask-app-base?link=https%3A%2F%2Fgithub.com%2Fwiley-man%2FFlask-App-Base%2Fblob%2Fmain%2FLICENSE)
 ![GitHub Release](https://img.shields.io/github/v/release/wiley-man/flask-app-base?link=https%3A%2F%2Fgithub.com%2Fwiley-man%2FFlask-App-Base%2Freleases%2Ftag%2Fv1.2.0)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/wiley-man/flask-app-base/flask-app.yml?branch=main&event=push&logoSize=auto&color=lightgreen&link=https%3A%2F%2Fgithub.com%2Fwiley-man%2FFlask-App-Base%2Factions)
