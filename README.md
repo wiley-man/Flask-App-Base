@@ -1,9 +1,9 @@
-![Static Badge](https://img.shields.io/badge/flask-app_base-blue?link=https://github.com%2Fwiley-man%2FFlask-App-Base)
-![GitHub License](https://img.shields.io/github/license/wiley-man/flask-app-base?link=https%3A%2F%2Fgithub.com%2Fwiley-man%2FFlask-App-Base%2Fblob%2Fmain%2FLICENSE)
-![GitHub Release](https://img.shields.io/github/v/release/wiley-man/flask-app-base?link=https%3A%2F%2Fgithub.com%2Fwiley-man%2FFlask-App-Base%2Freleases%2Ftag%2Fv1.2.0)
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/wiley-man/flask-app-base/flask-app.yml?branch=main&event=push&logoSize=auto&color=lightgreen&link=https%3A%2F%2Fgithub.com%2Fwiley-man%2FFlask-App-Base%2Factions)
-![Static Badge](https://img.shields.io/badge/python-3.11-purple?logo=python&logoSize=auto&link=https%3A%2F%2Fwww.python.org%2Fdownloads%2Frelease%2Fpython-31114%2F)
-![Static Badge](https://img.shields.io/badge/flask-3.1-purple?logo=flask&logoSize=auto&link=https%3A%2F%2Fflask.palletsprojects.com%2Fen%2Fstable%2F)
+[![Static Badge](https://img.shields.io/badge/flask-app_base-blue)](https://github.com/wiley-man/Flask-App-Base)
+[![GitHub License](https://img.shields.io/github/license/wiley-man/flask-app-base)](https://github.com/wiley-man/Flask-App-Base/blob/main/LICENSE)
+[![GitHub Release](https://img.shields.io/github/v/release/wiley-man/flask-app-base)](https://github.com/wiley-man/Flask-App-Base/releases/tag/v1.2.0)
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/wiley-man/flask-app-base/flask-app.yml?branch=main&event=push&logoSize=auto&color=lightgreen)](https://github.com/wiley-man/Flask-App-Base/actions)
+[![Static Badge](https://img.shields.io/badge/python-3.11-purple?logo=python&logoSize=auto)](https://www.python.org/downloads/release/python-31114/)
+[![Static Badge](https://img.shields.io/badge/flask-3.1-purple?logo=flask&logoSize=auto)](https://flask.palletsprojects.com/en/stable/)
 
 ------------------------------------------------------------------------
 
