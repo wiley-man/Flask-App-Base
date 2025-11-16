@@ -1,6 +1,6 @@
 [![Static Badge](https://img.shields.io/badge/flask-app_base-blue)](https://github.com/wiley-man/Flask-App-Base)
 [![GitHub License](https://img.shields.io/github/license/wiley-man/flask-app-base)](https://github.com/wiley-man/Flask-App-Base/blob/main/LICENSE)
-[![GitHub Release](https://img.shields.io/github/v/release/wiley-man/flask-app-base)](https://github.com/wiley-man/Flask-App-Base/releases/tag/v1.2.0)
+[![GitHub Release](https://img.shields.io/github/v/release/wiley-man/flask-app-base)](https://github.com/wiley-man/Flask-App-Base/releases/tag/latest)
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/wiley-man/flask-app-base/flask-app.yml?branch=main&event=push&logoSize=auto&color=lightgreen)](https://github.com/wiley-man/Flask-App-Base/actions)
 [![Static Badge](https://img.shields.io/badge/python-3.11-purple?logo=python&logoSize=auto)](https://www.python.org/downloads/release/python-31114/)
 [![Static Badge](https://img.shields.io/badge/flask-3.1-purple?logo=flask&logoSize=auto)](https://flask.palletsprojects.com/en/stable/)
