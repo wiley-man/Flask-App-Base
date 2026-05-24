@@ -1,16 +1,16 @@
-# Production-First Flask Demonstration Guide
+# Production-First Flask Application Guide
 
-A production-first Flask application does not begin with extra layers, hidden behavior, or a large folder tree. It begins with a small app that is easy to run, easy to read, and safe to change. The supplied Demo 1 README shows this clearly by starting inside VS Code and WSL, using a clean Python environment, creating one visible Flask file, returning raw HTML directly from route functions, and adding only the pieces needed to prove that the application can run, fail in a controlled way, and show selected runtime settings.
+A production-first Flask application starts with a small working app that can be trusted before it grows. The supplied demonstrations show that the first version does not need a large folder tree, a template system, or extra tools to carry strong habits. It needs a repeatable local setup, controlled configuration, clear startup behavior, safe output, visible routes, and a shape that can move into WSGI deployment without being rewritten.
 
-The core goals are production ready, easily maintainable, built for scalability, and guided by a security first mindset. In this approach, production ready means the app is shaped for real deployment habits from the start, even while it remains small. Easily maintainable means a future change can be made without guessing where behavior is hidden. Built for scalability means the first version does not block later growth. Security first means the app avoids careless exposure of settings and keeps output controlled.
+The core goals are production ready, easily maintainable, built for scalability, and guided by a security first mindset. Production ready means the application is built with real deployment behavior in mind from the start. Easily maintainable means the next change can be made without hunting through hidden behavior. Built for scalability means the first version does not block future growth. Security first means the app is careful about secrets, browser output, and runtime settings even while the demo stays simple.
 
-The Demo 1 README represents these goals through restraint. It uses WSL because a Linux-based local workspace is closer to common server environments than a default desktop setup. It uses VS Code connected to WSL so the editor, terminal, and Python tools operate in the same place. It creates a virtual environment so dependencies belong to the project instead of the machine. It records dependencies so the environment can be rebuilt. It creates a small Flask app in one file so the entry point, routes, and local run behavior remain visible.
+The demonstrations also show what should be avoided. The app does not use templates, so HTML is returned directly from route functions. The app does not add extra files just to appear more advanced. The app does not expose everything it can see in the runtime environment. The app does not rely on a local debug server as the production path. The result is plain, small, and deliberate.
 
-This guide keeps the same limits. It uses only pure Flask features. It assumes WSGI deployment is the standard production path. It keeps the application in a single code file for these demonstrations. It does not use templates, so HTML is returned as raw strings from route functions. That choice keeps the lesson focused on Flask behavior and avoids hiding output in a second file before the application needs that structure.
+The architecture is intentionally narrow. Development happens in VS Code connected to WSL. The Flask application stays in a single Python file. The code uses pure Flask features. Deployment is shaped around WSGI by keeping the `app` object importable and placing local server startup behind the normal Python main guard.
 
-## Example: Demo 1 as the Local Foundation
+## Example: Build the Local Foundation
 
-Demo 1 begins by placing development inside WSL and opening the project through VS Code. That is a production-aligned choice because it reduces the gap between local work and server behavior. The commands in the demo create a clean workspace, install Python tools, and open the folder from the Linux side.
+The first demonstration begins by making the local workspace closer to a real server environment. VS Code is opened from WSL so the editor, terminal, Python interpreter, and project files all point to the same Linux-based place. This reduces surprises later because local behavior is less separated from the environment where a Flask app is commonly deployed.
 
 ```bash
 mkdir -p ~/projects/flask-production-demo
@@ -18,9 +18,9 @@ cd ~/projects/flask-production-demo
 code .
 ```
 
-The important lesson is not the folder name. The lesson is that the project should live in a place that can be repeated, inspected, and rebuilt. A stable workspace makes the application easier to support because the editor, terminal, and Python interpreter all point at the same project.
+This is not about the exact folder name. The important habit is that the project has one clear home. When the workspace is repeatable, the application is easier to run, inspect, and support.
 
-The next production-first move is the virtual environment. A Flask app should not depend on whatever packages happen to be installed on the system. The environment should be created inside the project and selected in VS Code so the app, terminal, and editor agree on the Python interpreter.
+A clean Python environment is created inside the project. This keeps the app’s packages separate from the rest of the machine. That separation matters because a production-ready habit is not only writing code that works today. It is also making sure the same package set can be rebuilt later.
 
 ```bash
 python3 -m venv .venv
@@ -29,14 +29,14 @@ which python
 python --version
 ```
 
-After Flask is installed, the dependency list is saved. This is a small habit, but it is one of the clearest maintainability wins in the demo because the project can be rebuilt from a known package list.
+After Flask is installed, the dependency list is saved. This keeps the environment visible and makes future setup less dependent on memory.
 
 ```bash
 python -m pip install Flask
 python -m pip freeze > requirements.txt
 ```
 
-The first Flask code stays small on purpose. The home route proves the app can respond. The failure route proves that failure behavior can be triggered on demand during development. Both routes return raw strings, which follows the demonstration rule to avoid templating.
+The first application stays small. The home route proves that the app can respond. The failure route gives a controlled way to observe error behavior while developing. The HTML is returned directly from the route, which keeps the demonstration focused on Flask behavior instead of moving output into a template file.
 
 ```python
 from flask import Flask
@@ -55,16 +55,16 @@ if __name__ == "__main__":
     app.run(debug=True)
 ```
 
-This starter code should be treated as a stepping stone, not as the final production shape. The `debug=True` setting is useful for local learning, but it should not be carried into a WSGI deployment. The final pattern in the supplied material improves this by keeping local execution inside the `if __name__ == "__main__"` guard while leaving the `app` object available for a WSGI server to import.
+That starter code is useful for learning the app shape, but it is not the final production-aligned startup pattern. The later version keeps local execution available while preventing the development server from starting when the file is imported by a WSGI server.
 
 ```python
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
 ```
 
-That guard matters. In production, a WSGI server imports the Python file as a module and looks for the Flask application object. The guard prevents the development server from starting just because the file was imported. This is a simple example of production-first thinking: the local path remains easy, but the deployment path is not blocked.
+This small guard carries an important production lesson. In a WSGI deployment, the server imports the Python module and looks for the Flask `app` object. The app should be ready to import without accidentally starting the local development server. This lets the same file work for local practice and WSGI deployment.
 
-Configuration is introduced through environment values. The demo’s `/env` route does not print every setting it can find. It builds an allowed list, filters the environment, escapes the output, and then renders only the approved values. That pattern supports a security first mindset because the application controls what it reveals.
+The local foundation also introduces controlled runtime visibility. The `/env` route does not display every environment variable. It uses an allowed list, builds a smaller dictionary, escapes the values, and returns simple raw HTML. This supports a security first mindset because the route only reveals values that were deliberately approved.
 
 ```python
 import os
@@ -97,22 +97,177 @@ def env():
     return f"<h1>Runtime Environment (Filtered)</h1>\n{rows}"
 ```
 
-The escaping is just as important as the filter. Raw HTML output is allowed in this demonstration, but raw user-controlled or environment-controlled text should not be trusted. The `html.escape` call keeps values from being treated as HTML by the browser. That is the kind of small, steady security choice that belongs in the first version rather than being added after the app grows.
+The use of `html.escape` is a quiet but important part of the design. Since the demonstration uses raw HTML, values placed into that HTML must be treated carefully. Escaping helps prevent a value from being interpreted as browser markup.
 
-The final single-file version from the supplied material brings these ideas together. It keeps the app importable for WSGI, keeps the routes visible, keeps HTML raw, and keeps environment output filtered and escaped.
+This first demonstration represents all four goals. It is production ready because local work is aligned with a server-like environment and the app remains importable for WSGI. It is maintainable because setup, dependencies, and route behavior are visible. It is built for scalability because the app starts small without blocking later structure. It is security first because configuration display is filtered and escaped.
+
+## Example: Add Controlled Configuration
+
+The second demonstration moves configuration into a clear pattern. Instead of placing important runtime choices inside route logic, the app reads environment values into configuration classes. This keeps settings in one predictable place while preserving the single-file rule.
+
+The first production-first choice is to make critical settings required. In this demo, `SECRET_KEY` and `FLASK_ENV` must exist before the app can start. If either value is missing, startup fails immediately. This is safer than allowing the app to run with an incomplete setup and fail later in a confusing way.
+
+```bash
+export SECRET_KEY="change-this-local-demo-value"
+export FLASK_ENV="development"
+```
+
+The base configuration class reads the required values and stops the app when they are missing. It also limits the accepted environment names so a misspelled value does not silently load the wrong behavior.
+
+```python
+import os
+
+class Config:
+    """Base configuration with minimal default settings with fast fail for missing critical settings."""
+    APP_NAME = os.getenv("APP_NAME", "Flask Application")
+
+    SECRET_KEY = os.getenv("SECRET_KEY")
+    if SECRET_KEY is None:
+        raise ValueError("SECRET_KEY is not set, exiting application.")
+
+    FLASK_ENV = os.getenv("FLASK_ENV")
+    if FLASK_ENV == None:
+        raise ValueError("FLASK_ENV is not set, exiting application.")
+    if FLASK_ENV not in ("development", "production", "testing"):
+        raise ValueError(
+            f"Invalid FLASK_ENV: {FLASK_ENV}. "
+            "Must be 'development', 'production', or 'testing', exiting application."
+        )
+```
+
+The environment-specific classes keep runtime behavior clear. Local development can allow debug behavior. Testing can use testing settings. Production can disable debug mode and use stricter cookie behavior. The important lesson is that each environment has a named place for its settings instead of mixing those decisions into normal route code.
+
+```python
+class DevelopmentConfig(Config):
+    """Development configuration with debug settings."""
+    DEBUG = os.getenv("FLASK_DEBUG", "1") in ("1", "true", "True")
+    FLASK_SQLALCHEMY_DATABASE_URI = os.getenv("FLASK_SQLALCHEMY_DATABASE_URI", None)
+
+class TestingConfig(Config):
+    """Testing configuration with testing settings."""
+    TESTING = os.getenv("FLASK_TESTING", "1") in ("1", "true", "True")
+    FLASK_SQLALCHEMY_DATABASE_URI = os.getenv("FLASK_SQLALCHEMY_DATABASE_URI", None)
+    SESSION_COOKIE_SECURE = False
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = "Lax"
+
+class ProductionConfig(Config):
+    """Production configuration with production settings."""
+    LOG_LEVEL = os.getenv("LOG_LEVEL", "WARNING").upper()
+    DEBUG = False
+    FLASK_SQLALCHEMY_DATABASE_URI = os.getenv("FLASK_SQLALCHEMY_DATABASE_URI", None)
+    SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+```
+
+The mapping makes configuration selection simple. The app reads `FLASK_ENV`, finds the matching class, and loads it into Flask. This pattern is easy to extend because adding a new supported runtime would mean adding a class and mapping entry rather than rewriting route behavior.
+
+```python
+CONFIG_MAPPING = {
+    "development": DevelopmentConfig,
+    "testing": TestingConfig,
+    "production": ProductionConfig
+}
+
+app = Flask(__name__)
+
+flask_env = os.getenv("FLASK_ENV", "production").lower()
+config_class = CONFIG_MAPPING.get(flask_env)
+app.config.from_object(config_class)
+```
+
+The configuration route gives a direct way to inspect loaded settings during the demonstration. It keeps the output raw and simple, and it records access through the application logger. In a real public-facing system, this kind of route should be protected or removed because configuration visibility must remain intentional.
+
+```python
+@app.route("/config")
+def config():
+    app.logger.info("Configuration page accessed")
+    config_items = []
+    for key, value in app.config.items():
+        config_items.append(f"<b>{key}</b>: {value}")
+    return f'<h2>Application Configuration:</h2><br>{"<br>".join(sorted(config_items))}'
+```
+
+This configuration demonstration represents the production-first approach because the app refuses to start when critical values are missing, separates runtime behavior into clear classes, and keeps configuration loading outside the routes. It is maintainable because settings have one home. It is built for scalability because the same pattern can hold more settings later. It is security first because missing secrets are not ignored and stricter production values are named directly.
+
+## Example: Keep the Final Single-File Application Production Aligned
+
+The expected final code keeps the app in one file while showing the production-first habits together. Configuration is loaded before route behavior is relied on. Required values fail fast. Runtime classes keep development, testing, and production behavior separate. Routes return raw HTML. The environment view is filtered and escaped. The configuration view is direct and simple. The main guard keeps local execution separate from WSGI import behavior.
 
 ```python
 import os
 import html
 from flask import Flask
 
+# create Configuration classes for different environments
+# and set the appropriate setting from the environment variables or default values
+class Config:
+    """Base configuration with minimal default settings with fast fail for missing critical settings."""
+    APP_NAME = os.getenv("APP_NAME", "Flask Application")
+
+    SECRET_KEY = os.getenv("SECRET_KEY")
+    if SECRET_KEY is None:
+        raise ValueError("SECRET_KEY is not set, exiting application.")
+
+    FLASK_ENV = os.getenv("FLASK_ENV")
+    if FLASK_ENV == None:
+        raise ValueError("FLASK_ENV is not set, exiting application.")
+    if FLASK_ENV not in ("development", "production", "testing"):
+        raise ValueError(f"Invalid FLASK_ENV: {FLASK_ENV}. Must be 'development', 'production', or 'testing', exiting application.")
+
+# Each environment can have its own specific settings, but they will all inherit from the base Config class.
+# This allows us to have a common set of settings and then override or add specific settings for each environment as needed.
+# In development we might want to enable debug mode and set a different log level, while in production we would want to enable
+# debug mode and set a higher log level.
+class DevelopmentConfig(Config):
+    """Development configuration with debug settings."""
+    DEBUG = os.getenv("FLASK_DEBUG", "1") in ("1", "true", "True")
+
+    # Additional development-specific settings can be added here
+    FLASK_SQLALCHEMY_DATABASE_URI = os.getenv("FLASK_SQLALCHEMY_DATABASE_URI", None)
+
+# In testing we might want to use a different database URI, and set testing to True
+# to enable testing mode in Flask.
+class TestingConfig(Config):
+    """Testing configuration with testing settings."""
+    TESTING = os.getenv("FLASK_TESTING", "1") in ("1", "true", "True")
+
+    # Additional testing-specific settings can be added here
+    FLASK_SQLALCHEMY_DATABASE_URI = os.getenv("FLASK_SQLALCHEMY_DATABASE_URI", None)
+    SESSION_COOKIE_SECURE = False
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'
+
+# In production we want to set a higher log level, disable debug mode, and
+# ensure that we have secure settings for cookies and database URI.
+class ProductionConfig(Config):
+    """Production configuration with production settings."""
+    DEBUG = False
+
+    # Additional production-specific settings can be added here
+    FLASK_SQLALCHEMY_DATABASE_URI = os.getenv("FLASK_SQLALCHEMY_DATABASE_URI", None)
+    SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+
+CONFIG_MAPPING = {
+    "development": DevelopmentConfig,
+    "testing": TestingConfig,
+    "production": ProductionConfig
+}
+
 # initialize Flask application
 app = Flask(__name__)
+
+# load configuration based on FLASK_ENV environment variable
+# remember to set FLASK_ENV in your environment or app will fail to start.
+flask_env = os.getenv("FLASK_ENV", "production").lower()
+config_class = CONFIG_MAPPING.get(flask_env)
+app.config.from_object(config_class)
 
 # Using flask route decorators to creates routes
 @app.route("/")
 def home():
-    return "<h1>Flask Demo 1</h1>\n<p>Baseline application is running.</p>"
+    return "<h1>Flask Demo 3</h1>\n<p>Baseline application is running.</p>"
 
 @app.route("/fail")
 def fail():
@@ -146,6 +301,14 @@ def env():
     # return simple html output to browser as response.
     return f"<h1>Runtime Environment (Filtered)</h1>\n{rows}"
 
+# route for visualizing flask application configuration
+@app.route('/config')
+def config():
+    config_items = []
+    for key, value in app.config.items():
+        config_items.append(f'<b>{key}</b>: {value}')
+    return f'<h2>Application Configuration:</h2><br>{"<br>".join(sorted(config_items))}'
+
 # IMPORTANT below will allow for simple execution in development
 # however in production WSGI servers like Passenger will treat
 # app.py as a python module. This familiar piece of code prevents
@@ -155,12 +318,4 @@ if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
 ```
 
-The production lesson in this file is that simplicity is not the same as carelessness. A single file can still have clear startup behavior, controlled configuration display, escaped output, and a route that helps test failure behavior. Those choices make the app easier to maintain because each behavior is visible and named.
-
-The logging goal should continue from the same foundation. Demo 1 already points attention to console output when the app is running and includes a controlled failure route. A production-first logging demonstration should use that route to show how failures are recorded, how log level is controlled through configuration, and how noisy local output can be separated from useful application messages. Because the supplied README does not include a completed logging implementation, this guide does not add a logging example that was not present in the demo.
-
-The scalability goal should also build from the same foundation. Demo 1 keeps the app in one file so the behavior is visible before more shape is added. A later refactor can introduce blueprints and Python modules when the app has enough routes to justify that move. That refactor should not change the user-facing behavior first. It should move working behavior into clearer places while keeping the app importable for WSGI and testable from the outside. Because the supplied README keeps the demonstration in one code file, this guide treats that single-file design as the current demonstration boundary.
-
-The testing goal follows naturally from the home route, the failure route, and the environment route. A production-first test demonstration should confirm that the home route returns a successful response, that the environment route only shows allowed settings, and that failure behavior is predictable. Since the supplied README does not include unit test files or test commands, this guide does not add a test example beyond explaining how the existing routes prepare the app for testing.
-
-The strongest habit in Demo 1 is controlled growth. The project starts with a real development environment, a clean dependency boundary, a visible Flask app, and safe configuration display. It avoids templates, avoids extra platforms, and avoids adding structure before there is a reason for it. That is the production-first approach: build a small version that can be trusted, then expand only when the next demonstration needs the extra shape.
+The final lesson is that production-first Flask development is not about making the first app complicated. It is about making the first app honest. The environment is controlled. The dependencies are recorded. The app is importable. Configuration has a home. Secrets are required instead of guessed. Output is filtered and escaped. Logging begins where it helps explain behavior. Growth is planned without forcing early structure. Testing is prepared by making behavior stable and clear.
